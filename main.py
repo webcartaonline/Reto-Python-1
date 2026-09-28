@@ -126,6 +126,7 @@ def show_business_rules(catalog):
         )
     show_filtered_pieces("Unsold pieces", filter_unsold(catalog))
 
+
 def show_piece_concatenated(piece):
     print("Piece " + piece["id"] + ": " + piece["name"] + " (" + piece["category"] + ") - " + str(piece["price"]))
 
@@ -170,6 +171,72 @@ def show_string_operations(catalog):
     print(f"Normalized piece name: {normalize_piece_name(piece['name'])}")
 
 
+def count_by_status(catalog, status):
+    return len(filter_by_status(catalog, status))
+
+
+def calculate_total_price(catalog):
+    return sum(piece["price"] for piece in catalog)
+
+
+def calculate_average_price(catalog):
+    if not catalog:
+        return 0.0
+    return calculate_total_price(catalog) / len(catalog)
+
+
+def show_enumerated_pieces(catalog):
+    for position, piece in enumerate(catalog, start=1):
+        print(f"{position}. {piece['name']}")
+
+
+def show_catalog_metrics(catalog):
+    print("\n--- Catalog metrics ---")
+    for status in ALLOWED_STATUSES:
+        print(f"Pieces '{status}': {count_by_status(catalog, status)}")
+    print(f"Total pieces: {len(catalog)}")
+    print(f"Total price: {calculate_total_price(catalog):.2f}")
+    print(f"Average price: {calculate_average_price(catalog):.2f}")
+    print("\nNumbered pieces:")
+    show_enumerated_pieces(catalog)
+
+
+def show_average_price(catalog):
+    print(f"\nAverage price: {calculate_average_price(catalog):.2f}")
+
+
+def show_menu():
+    print("\n" + "=" * 50)
+    print(f"{SYSTEM_NAME} - Main menu")
+    print("=" * 50)
+    print("1. Show all pieces")
+    print("2. Show available pieces")
+    print("3. Show average price")
+    print("4. Show catalog metrics")
+    print("5. Exit")
+
+
+def run_menu(catalog):
+    menu_actions = {
+        "1": lambda: show_catalog(catalog),
+        "2": lambda: show_filtered_pieces(
+            "Available pieces", filter_by_status(catalog, "disponible")
+        ),
+        "3": lambda: show_average_price(catalog),
+        "4": lambda: show_catalog_metrics(catalog),
+    }
+    while True:
+        show_menu()
+        option = input("Choose an option: ").strip()
+        if option == "5":
+            print(f"\nThank you for using {SYSTEM_NAME}. Goodbye!")
+            break
+        action = menu_actions.get(option)
+        if action is None:
+            print("Invalid option. Please choose a number from 1 to 5.")
+            continue
+        action()
+
 
 def main():
     show_welcome_message()
@@ -181,6 +248,7 @@ def main():
     show_pieces_above_price(catalog)
     show_business_rules(catalog)
     show_string_operations(catalog)
+    run_menu(catalog)
 
 
 if __name__ == "__main__":
