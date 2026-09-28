@@ -100,6 +100,33 @@ def show_pieces_above_price(catalog):
     show_filtered_pieces(f"Pieces with price above {min_price:.2f}", pieces)
 
 
+def can_be_published(piece):
+    return piece["price"] > 0 and piece["status"] == "disponible"
+
+
+def requires_review(piece):
+    return piece["status"] == "reservada" or piece["status"] == "vendida"
+
+
+def filter_unsold(catalog):
+    return [piece for piece in catalog if not piece["status"] == "vendida"]
+
+
+def format_yes_no(condition):
+    return "Yes" if condition else "No"
+
+
+def show_business_rules(catalog):
+    print("\n--- Publication and review rules ---")
+    for piece in catalog:
+        print(
+            f"[{piece['id']}] {piece['name']} -> "
+            f"Can be published: {format_yes_no(can_be_published(piece))} | "
+            f"Requires review: {format_yes_no(requires_review(piece))}"
+        )
+    show_filtered_pieces("Unsold pieces", filter_unsold(catalog))
+
+
 def main():
     show_welcome_message()
     catalog = register_pieces()
@@ -108,6 +135,7 @@ def main():
     show_catalog_summary(catalog, categories)
     show_pieces_by_status(catalog)
     show_pieces_above_price(catalog)
+    show_business_rules(catalog)
 
 
 if __name__ == "__main__":
