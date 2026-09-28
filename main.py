@@ -126,6 +126,50 @@ def show_business_rules(catalog):
         )
     show_filtered_pieces("Unsold pieces", filter_unsold(catalog))
 
+def show_piece_concatenated(piece):
+    print("Piece " + piece["id"] + ": " + piece["name"] + " (" + piece["category"] + ") - " + str(piece["price"]))
+
+
+def show_piece_interpolated(piece):
+    print(f"Piece {piece['id']}: {piece['name']} ({piece['category']}) - {piece['price']:.2f}")
+
+
+def parse_tags(raw_tags):
+    return [tag.strip() for tag in raw_tags.split(",") if tag.strip()]
+
+
+def replace_used_with_certified(description):
+    return description.replace("usada", "certificada")
+
+
+def normalize_piece_name(name):
+    return " ".join(name.split()).title()
+
+
+def show_user_name_formats(user_name):
+    clean_name = user_name.strip()
+    print(f"Trimmed: '{clean_name}'")
+    print(f"Lowercase: {clean_name.lower()}")
+    print(f"Uppercase: {clean_name.upper()}")
+    print(f"Title: {clean_name.title()}")
+
+
+def show_string_operations(catalog):
+    print("\n--- String operations ---")
+    piece = catalog[0]
+    show_piece_concatenated(piece)
+    show_piece_interpolated(piece)
+
+    tags = parse_tags(input("\nEnter tags separated by commas: "))
+    print(f"Tags: {tags}")
+
+    print(f"Original description: {piece['description']}")
+    print(f"Updated description: {replace_used_with_certified(piece['description'])}")
+
+    show_user_name_formats(input("\nEnter your user name: "))
+    print(f"Normalized piece name: {normalize_piece_name(piece['name'])}")
+
+
 
 def main():
     show_welcome_message()
@@ -136,6 +180,7 @@ def main():
     show_pieces_by_status(catalog)
     show_pieces_above_price(catalog)
     show_business_rules(catalog)
+    show_string_operations(catalog)
 
 
 if __name__ == "__main__":
