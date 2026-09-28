@@ -1,6 +1,7 @@
 SYSTEM_NAME = "CollectiVault"
 TOTAL_PIECES = 10
 ALLOWED_STATUSES = ("disponible", "reservada", "vendida")
+REQUIRED_DESCRIPTION_WORDS = ("usada", "certificada")
 
 
 def show_welcome_message():
@@ -10,15 +11,58 @@ def show_welcome_message():
     print("=" * 50)
 
 
+def ask_non_empty_text(prompt, field_name):
+    while True:
+        value = input(prompt).strip()
+        if value:
+            return value
+        print(f"{field_name} cannot be empty. Please try again.")
+
+
+def ask_positive_price():
+    while True:
+        raw_price = input("Price: ").strip()
+        try:
+            price = float(raw_price)
+        except ValueError:
+            print("Invalid price. Please enter a numeric value.")
+            continue
+        if price > 0:
+            return price
+        print("Invalid price. It must be greater than zero.")
+
+
+def ask_status():
+    allowed = "/".join(ALLOWED_STATUSES)
+    while True:
+        status = input(f"Status ({allowed}): ").strip().lower()
+        if status in ALLOWED_STATUSES:
+            return status
+        print(f"Invalid status. Allowed values: {', '.join(ALLOWED_STATUSES)}.")
+
+
+def has_required_word(description):
+    lower_description = description.lower()
+    return any(word in lower_description for word in REQUIRED_DESCRIPTION_WORDS)
+
+
+def ask_description():
+    while True:
+        description = ask_non_empty_text("Description: ", "Description")
+        if has_required_word(description):
+            return description
+        print("Invalid description. It must include 'usada' or 'certificada'.")
+
+
 def ask_piece_data(piece_number):
     print(f"\n--- Piece {piece_number} of {TOTAL_PIECES} ---")
     return {
-        "id": input("Identifier: ").strip(),
-        "name": input("Name: ").strip(),
-        "category": input("Category: ").strip(),
-        "price": float(input("Price: ")),
-        "status": input("Status (disponible/reservada/vendida): ").strip().lower(),
-        "description": input("Description: ").strip(),
+        "id": ask_non_empty_text("Identifier: ", "Identifier"),
+        "name": ask_non_empty_text("Name: ", "Name"),
+        "category": ask_non_empty_text("Category: ", "Category"),
+        "price": ask_positive_price(),
+        "status": ask_status(),
+        "description": ask_description(),
     }
 
 
