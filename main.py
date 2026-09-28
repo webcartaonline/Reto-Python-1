@@ -28,10 +28,43 @@ def register_pieces():
     return catalog
 
 
+def get_unique_categories(catalog):
+    return {piece["category"] for piece in catalog}
+
+
+def show_piece(piece):
+    print(f"ID: {piece['id']}")
+    print(f"Name: {piece['name']}")
+    print(f"Category: {piece['category']}")
+    print(f"Price: {piece['price']:.2f}")
+    print(f"Status: {piece['status']}")
+    print(f"Description: {piece['description']}")
+
+
+def show_catalog(catalog):
+    print("\n" + "=" * 50)
+    print(f"{SYSTEM_NAME} - Full catalog")
+    print("=" * 50)
+    for piece in catalog:
+        print("-" * 50)
+        show_piece(piece)
+
+
+def show_catalog_summary(catalog, categories):
+    print("\n" + "=" * 50)
+    print("Catalog summary")
+    print("=" * 50)
+    print(f"Total pieces: {len(catalog)}")
+    print(f"Unique categories: {', '.join(sorted(categories))}")
+    print(f"Different categories: {len(categories)}")
+
+
 def main():
     show_welcome_message()
     catalog = register_pieces()
-    print(f"\n{len(catalog)} pieces registered successfully.")
+    categories = get_unique_categories(catalog)
+    show_catalog(catalog)
+    show_catalog_summary(catalog, categories)
 
 
 if __name__ == "__main__":
